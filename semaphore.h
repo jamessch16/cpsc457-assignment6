@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <pthread.h>
-#include "queue_pthread_cond_t.h"
+#include "queue_cond_t.h"
 
 typedef struct {
     pthread_mutex_t *mutex;

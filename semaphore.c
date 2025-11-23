@@ -6,10 +6,7 @@ Implements a counting Semaphore object
 #include <pthread.h>
 
 #include "semaphore.h"
-#include "queue_pthread_cond_t.h"
-
-
-// TODO look into restricted pointers for private attrivutes
+#include "queue_cond_t.h"
 
 
 Semaphore *semaphore_create(int size) {
@@ -63,6 +60,9 @@ int semaphore_wait(Semaphore *semaphore) {
     } while (suc != 0);
 
     while (semaphore->count <= 0) {   // TODO this may be just if block
+
+        // TOOD enque thread here
+
         // TODO Wait on S.queue (block the thread)
         pthread_cond_wait(NULL, semaphore->mutex);        // TODO IMPORTANT Condition variable, wakes thread up when variable is set to 1
                                                           // Implement through signal variable in Queue linked list??? That we add the process to???

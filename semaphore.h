@@ -5,7 +5,7 @@
 typedef struct {
     pthread_mutex_t *mutex;
     int count;
-    queue_cond_t queue;
+    queue_cond_t *queue;
 } Semaphore;
 
 

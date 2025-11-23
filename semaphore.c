@@ -28,8 +28,8 @@ Semaphore *semaphore_create(int size) {
     int suc = pthread_mutex_init(mutex, NULL);  // TODO HANDLE FAIL TO CREATE
 
     semaphore->mutex = mutex;
-
-    // TODO Instantiate queue
+    semaphore->queue = queue_cond_t_create();   // TODO Rework creation create queue at passed address, return success code
+    semaphore->count = 0;
 
     return semaphore;
 }
@@ -39,13 +39,15 @@ void semaphore_destroy(Semaphore *semaphore) {
     Releases a semaphore from memory
     */
 
-    // TODO release queue
     
     int suc;
     
     suc = pthread_mutex_destroy(semaphore->mutex);  // TODO HANDLE FAIL TO DESTROY
+
+    suc = queue_cond_t_destroy(semaphore->queue);
     
-    free(semaphore->mutex);
+
+    free(semaphore->mutex);     // TODO Might fail if pthread_mutex_destroy frees memory for us
     free(semaphore);
 }
 
@@ -54,8 +56,6 @@ int semaphore_wait(Semaphore *semaphore) {
 
     int suc;
 
-    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;     // TODO initialize value
-
     // Acquire semaphore lock
     do {
         suc = pthread_mutex_lock(semaphore->mutex);      // TODO find better method than busy loop
@@ -63,11 +63,18 @@ int semaphore_wait(Semaphore *semaphore) {
 
     while (semaphore->count <= 0) {   // TODO this may be just if block
 
-        // TOOD enque thread here
+
+        pthread_cond_t *cond = PTHREAD_COND_INITIALIZER;     // TODO initialize value
+
+        // TODO MALLOC
+
+        queue_cond_t_put(semaphore->queue, NULL);         // TODO MALLOC the cond_t
 
         // TODO Wait on S.queue (block the thread)
         pthread_cond_wait(NULL, semaphore->mutex);        // TODO IMPORTANT Condition variable, wakes thread up when variable is set to 1
                                                           // Implement through signal variable in Queue linked list??? That we add the process to???
+
+        free(cond);
     }
 
     semaphore->count--;

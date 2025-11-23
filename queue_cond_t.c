@@ -4,16 +4,47 @@
 
 // queue constructor
 queue_cond_t *queue_cond_t_create() {
+    /*
+    Constructs an empty queue of pthread_cond_t values
+
+    returns
+    a pointer to the constructed queue
+    */
     queue_cond_t *queue = (queue_cond_t *) malloc(sizeof(queue_cond_t));
 
-    // TODO initialize values
+    queue->head = NULL;
+    queue->tail = NULL;
+    queue->size = NULL;
+
+    return queue;
 }
 
-void queue_cond_t_destroy(queue_cond_t *queue) {
-    
-    // TODO FREE OBJECT ATTRIBUTESHERE
+int queue_cond_t_destroy(queue_cond_t *queue) {
+    /*
+    Destructs the queue object passed
 
+    args:
+    queue - A pointer to the queue to be destructed
+    */
+    
+
+    
     // TODO HANDLE FAILURE
+
+
+
+    node_cond_t *current = queue->head;
+    node_cond_t *next;
+
+    while (current != NULL) {
+        
+        // TODO PASS NEXT TO NEXT
+
+        // TODO TODO
+
+
+        free(current);
+    }
 
     free(queue);
 }
@@ -55,7 +86,7 @@ node_cond_t *node_cond_t_create(pthread_cond_t cond, node_cond_t *next) {
     return node;
 }
 
-void node_cond_t_destroy(node_cond_t *node) {
+int node_cond_t_destroy(node_cond_t *node) {
     /*
     Destructs the node object passed
 

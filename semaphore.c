@@ -41,7 +41,9 @@ void semaphore_destroy(Semaphore *semaphore) {
 
     // TODO release queue
     
-    int suc = pthread_mutex_destroy(semaphore->mutex);  // TODO HANDLE FAIL TO DESTROY
+    int suc;
+    
+    suc = pthread_mutex_destroy(semaphore->mutex);  // TODO HANDLE FAIL TO DESTROY
     
     free(semaphore->mutex);
     free(semaphore);

@@ -58,29 +58,36 @@ int semaphore_wait(Semaphore *semaphore) {
 
     // Acquire semaphore lock
     do {
-        suc = pthread_mutex_lock(semaphore->mutex);      // TODO find better method than busy loop
+        suc = pthread_mutex_lock(semaphore->mutex);             // TODO find better method than busy loop
     } while (suc != 0);
 
-    while (semaphore->count <= 0) {   // TODO this may be just if block
+    while (semaphore->count <= 0) {                             // TODO this may be just if block
 
 
-        pthread_cond_t *cond = PTHREAD_COND_INITIALIZER;     // TODO initialize value
+        // pthread_cond_t *cond = PTHREAD_COND_INITIALIZER;     // TODO initialize value
 
-        // TODO MALLOC
+        // initialize condition variable
+        pthread_cond_t *cond = malloc(sizeof(pthread_cond_t));
+        suc = pthread_cond_init(cond, NULL);                    // TODO Set attributes
 
-        queue_cond_t_put(semaphore->queue, NULL);         // TODO MALLOC the cond_t
+        // TODO continue if failed
+        
+        // put thread in queue and block until signaled
+        suc = queue_cond_t_put(semaphore->queue, cond);         // TODO MALLOC the cond_t
+        suc = pthread_cond_wait(cond, semaphore->mutex);        // TODO IMPORTANT Condition variable, wakes thread up when variable is set to 1
 
-        // TODO Wait on S.queue (block the thread)
-        pthread_cond_wait(NULL, semaphore->mutex);        // TODO IMPORTANT Condition variable, wakes thread up when variable is set to 1
-                                                          // Implement through signal variable in Queue linked list??? That we add the process to???
-
+        // clean up condition variable
+        suc = pthread_cond_destroy(cond);                       // TODO having both of these statements may be redundant.
         free(cond);
     }
 
+    // decrement the semaphore and enter the CS
     semaphore->count--;
 
 
-    // TODO unlock semaphore
+    do {
+        suc = pthread_mutex_unlock(semaphore->mutex);           // TODO find better method than busy loop
+    } while (suc != 0);
 
     return 0;
 }
@@ -96,10 +103,18 @@ int semaphore_signal(Semaphore *semaphore) {
 
     semaphore->count++;
 
-    // TOOD If queue not empty then remove a thread from queue and unblock it
+    // If queue not empty then remove a thread from queue and unblock it
+    if (semaphore->queue->size > 0) {
+        pthread_cond_t *cond = queue_cond_t_pop(semaphore->queue);
+        suc = pthread_cond_signal(cond);
+
+        // TODO release from memory? Or let the other thread do that
+    }
 
 
-    // TODO unlock semaphore
+    do {
+        suc = pthread_mutex_unlock(semaphore->mutex);      // TODO find better method than busy loop
+    } while (suc != 0);
 
     return 0;
 }

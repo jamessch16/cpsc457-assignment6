@@ -26,28 +26,26 @@ int queue_cond_t_destroy(queue_cond_t *queue) {
 
     args:
     queue - A pointer to the queue to be destructed
+
+    returns
+    0 if successful
+    1 otherwise
     */
     
 
+    // TODO handle failure or implement max number of loop
 
-    // TODO HANDLE FAILURE
+    int suc;
 
-
-
-    node_cond_t *current = queue->head;
-    node_cond_t *next;
-
-    while (current != NULL) {
+    // empty queue
+    while (queue->head != NULL) {
         
-        // TODO PASS NEXT TO NEXT
-
-        // TODO TODO
-
-
-        free(current);
+        suc = queue_cond_t_pop(queue);
     }
 
     free(queue);
+
+    return 0;
 }
 
 

@@ -6,7 +6,7 @@ typedef struct {
     pthread_mutex_t *mutex;
     queue_cond_t *queue;
     int count;
-    int id;  // optional id 
+    int id;  // user defined id. uniqueness not guaranteed
 } Semaphore;
 
 

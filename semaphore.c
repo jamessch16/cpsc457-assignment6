@@ -15,7 +15,7 @@ Semaphore *semaphore_create(int size, int id) {
 
     args:
     size - The number of processes allowed in the CS
-    id - Optional id value for the semaphore
+    id - user defined id value for the semaphore
 
     returns a pointer to the constructed Semaphore
     */
@@ -24,13 +24,7 @@ Semaphore *semaphore_create(int size, int id) {
     pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 
     semaphore->count = size;
-
-    if (id == NULL) {
-        semaphore->id = -1;
-    }
-    else {
-        semaphore->id = id;
-    }
+    semaphore->id = id;
 
     // TODO Check addressing, attributes
     int suc = pthread_mutex_init(mutex, NULL);  // TODO HANDLE FAIL TO CREATE
@@ -50,6 +44,7 @@ void semaphore_destroy(Semaphore *semaphore) {
     
     int suc;
     
+    pthread_mutex_unlock(semaphore->mutex);
     suc = pthread_mutex_destroy(semaphore->mutex);  // TODO HANDLE FAIL TO DESTROY
 
     suc = queue_cond_t_destroy(semaphore->queue);

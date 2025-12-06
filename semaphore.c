@@ -9,12 +9,13 @@ Implements a counting Semaphore object
 #include "queue_cond_t.h"
 
 
-Semaphore *semaphore_create(int size) {
+Semaphore *semaphore_create(int size, int id) {
     /*
     Constructs a Semaphore object
 
     args:
     size - The number of processes allowed in the CS
+    id - Optional id value for the semaphore
 
     returns a pointer to the constructed Semaphore
     */
@@ -23,6 +24,13 @@ Semaphore *semaphore_create(int size) {
     pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 
     semaphore->count = size;
+
+    if (id == NULL) {
+        semaphore->id = -1;
+    }
+    else {
+        semaphore->id = id;
+    }
 
     // TODO Check addressing, attributes
     int suc = pthread_mutex_init(mutex, NULL);  // TODO HANDLE FAIL TO CREATE
@@ -69,8 +77,6 @@ int semaphore_wait(Semaphore *semaphore) {
         // initialize condition variable
         pthread_cond_t *cond = malloc(sizeof(pthread_cond_t));
         suc = pthread_cond_init(cond, NULL);                    // TODO Set attributes
-
-        // TODO continue if failed
         
         // put thread in queue and block until signaled
         suc = queue_cond_t_put(semaphore->queue, cond);         // TODO MALLOC the cond_t

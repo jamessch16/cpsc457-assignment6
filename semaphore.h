@@ -4,12 +4,13 @@
 
 typedef struct {
     pthread_mutex_t *mutex;
-    int count;
     queue_cond_t *queue;
+    int count;
+    int id;  // optional id 
 } Semaphore;
 
 
-Semaphore *semaphore_create(int size);
+Semaphore *semaphore_create(int size, int id);
 void semaphore_destroy(Semaphore *semaphore);
 int semaphore_wait(Semaphore *semaphore);
 int semaphore_signal(Semaphore *semaphore);
